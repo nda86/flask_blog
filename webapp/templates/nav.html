@@ -1,4 +1,6 @@
 {% import 'macros.html' as macros %}
 <nav class="nav nav-pills nav-stacked">
-    {{ macros.render_link('blog.home', ['nav-link'], 'Blog') }}
+    {{ macros.render_link('blog.home', ['nav-link'], 'Home') }}
+    {{ macros.render_link('blog.posts', ['nav-link'], 'Posts') }}
+    {{ macros.render_link('auth.login', ['nav-link'], 'Login') }}
 </nav>

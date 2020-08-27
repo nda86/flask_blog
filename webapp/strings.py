@@ -1,3 +1,11 @@
+NAME_BLOG = 'Awesome Blog'
+
+
 class Title:
-	t404 = "404 - Page Not Found | Blog"
-	t500 = "505 - Internal Server Error | Blog"
+	"""
+	Helper для хранения строковой переменной title, используемой в шаблонах для рендера страниц сервера
+	"""
+	t404 = f"404 - Page Not Found | {NAME_BLOG}"
+	t500 = f"505 - Internal Server Error | {NAME_BLOG}"
+	tLoginPage = f"Login | {NAME_BLOG}"
+	tBlogPosts = f"Blog Posts | {NAME_BLOG}"

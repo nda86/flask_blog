@@ -7,6 +7,10 @@ class DevConfig(BaseConfig):
 
 	SECRET_KEY = "thisisasecret"
 
+	SQLALCHEMY_DATABASE_URI = "sqlite://webapp.sqlite3"
+	SQLALCHEMY_ECHO = True
+	SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 class ProdConfig(BaseConfig):
 	pass
