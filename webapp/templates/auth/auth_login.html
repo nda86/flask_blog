@@ -1,5 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Login Form</h1>
+
+    <form method="post" action="{{ url_for(request.endpoint) }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.username.label }}
+            {{ form.username(class_="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class_="form-control") }}
+        </div>
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <br>
+
+    <div>
+        <div class="alert alert-primary" role="alert">
+        <strong>Not register yet?</strong> <a href="{{ url_for('auth.registration') }}" class="alert-link">Register</a>
+        </div>
+    </div>
+
 {% endblock %}

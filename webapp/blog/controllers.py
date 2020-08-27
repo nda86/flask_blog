@@ -2,6 +2,7 @@ from flask import Blueprint, render_template
 from flask_login import login_required
 
 from webapp.strings import Title
+from .models import Post, Tag
 
 
 blog_blueprint = Blueprint('blog', __name__, url_prefix='/blog', template_folder='../templates/blog')
