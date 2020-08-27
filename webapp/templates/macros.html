@@ -1,0 +1,4 @@
+{% macro render_link(endpoint, classes, link_text) %}
+    <a class="{{ ' '.join(classes) }} {% if request.endpoint == endpoint %} active {% endif %}"
+       href="{{ url_for(endpoint) }}">{{ link_text }}</a>
+{% endmacro %}
