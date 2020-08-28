@@ -39,7 +39,9 @@
 
     <div>
         <div class="alert alert-primary" role="alert">
-        <strong>Not register yet?</strong> <a href="{{ url_for('auth.registration') }}" class="alert-link">Register</a>
+        <a href="{{ url_for('auth.registration') }}" class="alert-link"><strong>Not register yet?</strong> Register</a>
+            <hr>
+            <a href="{{ oauth_google_login }}">or login via Google</a>
         </div>
     </div>
 

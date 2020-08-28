@@ -1,10 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for
-from flask_login import login_user, logout_user
+from flask import Blueprint, render_template, redirect, url_for, session, request
+from flask_login import login_user, logout_user, current_user
+from requests import HTTPError
+from requests_oauthlib import OAuth2Session
 
 from webapp.strings import Title
 from webapp import login_manager, db
 from .forms import RegistrationForm, LoginForm
 from .models import User
+from app_config import OAuthConfig
 
 auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth', template_folder="../templates/auth")
 
@@ -16,6 +19,16 @@ login_manager.login_view = "auth.login"
 def user_loader(id):
 	"""функция для загрузки юзера по его id из бд, если в сессии есть идентификатор залогиненного пользователя"""
 	return User.query.get(id)
+
+
+def get_oauth(state=None, token=None):
+	if state:
+		return OAuth2Session(client_id=OAuthConfig.CLIENT_ID, redirect_uri=OAuthConfig.REDIRECT_URI, state=state)
+
+	if token:
+		return OAuth2Session(client_id=OAuthConfig.CLIENT_ID, token=token)
+
+	return OAuth2Session(client_id=OAuthConfig.CLIENT_ID, redirect_uri=OAuthConfig.REDIRECT_URI, scope=OAuthConfig.SCOPE)
 
 
 @auth_blueprint.route('/',)
@@ -33,8 +46,61 @@ def login():
 		login_user(User.query.filter_by(username=form.username.data).first())
 		return redirect(url_for('blog.posts'))
 
+	# создаем объект для работы с OAuth
+	oauth = get_oauth()
+	# генерируем ссылку для регистраци по OAuth и state - уникальный код для идентификации, типа csrf
+	url, state = oauth.authorization_url(OAuthConfig.AUTH_URI)
+	session['state'] = state
+
 	# выполняется если на данный урл пришел get запрос
-	return render_template("auth_login.html", title=Title.tLoginPage, form=form)
+	return render_template("auth_login.html", title=Title.tLoginPage, form=form, oauth_google_login=url)
+
+
+@auth_blueprint.route('/gCallback')
+def oauth_login():
+	"""обработка ответа от провайдера oauth"""
+
+	# если залогиненый юзер зашел на урл, то перенаправляем его
+	if current_user.is_authenticated:
+		return redirect(url_for("blog.posts"))
+
+	# если от провайдера пришли ошибки то пишем их и редиректим на страницу логина
+	if 'error' in request.args:
+		error = request.args.get('error')
+		print(error)
+		return redirect(url_for("auth.login"))
+
+	# если в ответе нет ни state ни code значит регистраци не прошла, перенаправляем на стр логина
+	if "code" not in request.args and "state" not in request.args:
+		return redirect(url_for("auth.login"))
+	else:
+		# получаем access token
+		token = get_oauth(state=session["state"]).fetch_token(OAuthConfig.TOKEN_URI, client_secret=OAuthConfig.CLIENT_SECRET,
+														  authorization_response=request.url)
+		try:
+			request_user_info = get_oauth(token=token).get(OAuthConfig.USER_INFO)
+		except HTTPError as e:
+			print('server error')
+			return redirect(url_for("auth.login"))
+
+		if request_user_info.status_code == 200:
+			user_info = request_user_info.json()
+			user_email = user_info['email']
+			user = User(user_email)
+
+			try:
+				db.session.add(user)
+				db.session.commit()
+			except Exception as e:
+				print(e)
+				db.session.rollback()
+				return redirect(url_for("auth.login"))
+			else:
+				login_user(user)
+				return redirect(url_for("blog.posts"))
+		else:
+			print('server error')
+			return redirect(url_for("auth.login"))
 
 
 @auth_blueprint.route('/registration', methods=['GET', 'POST'])

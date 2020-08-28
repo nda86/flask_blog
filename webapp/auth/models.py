@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
 	"""
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(255), unique=True, nullable=False)
-	password = db.Column(db.String(255), nullable=False)
+	password = db.Column(db.String(255))
 	# имеет связь многие ко многим с таблицей Role.
 	roles = db.relationship('Role', secondary=roles, backref=db.backref('users', lazy='dynamic'))
 	# имеет связи один ко многим с таблицей Post.

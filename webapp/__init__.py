@@ -50,9 +50,23 @@ def create_app(config=None):
 	app.config.from_object(config)
 
 	# инициализируем flask extensions
+
+	# инициализируем бд
 	db.init_app(app)
-	migrate.init_app(app, db)
+
+	# инициализирууем миграцию
+	# для sqlite db нужно дополнительно указывать параметр render_as_batch=True,
+	# для выполнения ALTER TABLE ADD COLUMN | ALTER TABLE REMOVE COLUMN | ALTER TABLE RENAME COLUMN | ALTER TABLE RENAME
+	# поэтому сначала определим является ли используемая бд sqlite db
+	# так же ставим параметр compare_type=True, чтобы при создании миграции учитывались изменения типов полей таблицы
+	with app.app_context():
+		is_sqlite = db.engine.url.drivername == 'sqlite'
+	migrate.init_app(app, db, render_as_batch=is_sqlite, compare_type=True)
+
+	# инициализируем утилиту для создания и проверки хешей паролей
 	bcrypt.init_app(app)
+
+	# для выполнения входа пользователя в систему, выхода и определения текущего пользователя
 	login_manager.init_app(app)
 
 	# импотируем функцию регистрации блюпринта и передаем в ней app, таким образом добавляем модуль(блюпринт) к серверу
