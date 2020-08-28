@@ -19,6 +19,19 @@
                     </div>
                 {% endfor %}
             {% endif %}
+
+        <div class="form-group">
+            {{ form.recaptcha.label }}
+            {{ form.recaptcha() }}
+            {% if form.recaptcha.errors %}
+                {% for error in form.recaptcha.errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
             <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 

@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm as Form
+from flask_wtf import RecaptchaField
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
 
@@ -9,9 +10,10 @@ class RegistrationForm(Form):
 	"""
 	класс формы регистрации, служит для валидации введенных данных
 	"""
-	username = StringField("Логин", validators=[DataRequired("Поле обязательно для заполнения!"), Length(max=50)])
-	password = PasswordField("Пароль(минимум 8 символов)", validators=[DataRequired("Поле обязательно для заполнения!"), Length(min=8)])
+	username = StringField("Login", validators=[DataRequired(), Length(max=50)])
+	password = PasswordField("Password", validators=[DataRequired(), Length(min=8)])
 	confirm_password = PasswordField("Подтверждение пароля", validators=[DataRequired("Поле обязательно для заполнения!"), EqualTo('password')])
+	recaptha = RecaptchaField()
 
 	def validate(self):
 		"""
@@ -27,7 +29,7 @@ class RegistrationForm(Form):
 
 		user = User.query.filter_by(username=self.username.data.lower()).first()
 		if user:
-			self.username.errors.append('Указаное имя пользователя уже зянято. Введите другое имя.')
+			self.username.errors.append('This username is already busy')
 			return False
 
 		return True
@@ -45,6 +47,7 @@ class LoginForm(Form):
 	"""
 	username = StringField("Login", validators=[DataRequired()])
 	password = PasswordField("Password", validators=[DataRequired()])
+	recaptcha = RecaptchaField()
 
 	def validate(self):
 		main_valid = super().validate()
@@ -55,13 +58,13 @@ class LoginForm(Form):
 		user = User.query.filter_by(username=self.username.data.lower()).first()
 
 		if not user:
-			self.username.errors.append('Wrong username or password')
+			self.username.errors.append('Invalid username or password')
 			return False
 
 		check_password = user.check_password(self.password.data)
 
 		if not check_password:
-			self.username.errors.append('Wrong username or password')
+			self.username.errors.append('Invalid username or password')
 			return False
 
 		return True

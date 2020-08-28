@@ -37,7 +37,7 @@ def login():
 	return render_template("auth_login.html", title=Title.tLoginPage, form=form)
 
 
-@auth_blueprint.route('/register', methods=['GET', 'POST'])
+@auth_blueprint.route('/registration', methods=['GET', 'POST'])
 def registration():
 	"""
 	маршрут для выполнения регистрации пользователя в системе
