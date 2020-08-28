@@ -1,4 +1,6 @@
 .idea
 venv
-.pytest_cache
+*/**/.pytest_cache
 */**/__pycache__
+migrations
+
