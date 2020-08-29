@@ -72,9 +72,11 @@ def create_app(config=None):
 	# импотируем функцию регистрации блюпринта и передаем в ней app, таким образом добавляем модуль(блюпринт) к серверу
 	from .blog import create_module as create_blog
 	from .auth import create_module as create_auth
+	from .admin import create_module as create_admin
 
 	create_blog(app)
 	create_auth(app)
+	create_admin(app)
 
 	# регистрируем обработчики ошибок
 	app.register_error_handler(404, error_404)
