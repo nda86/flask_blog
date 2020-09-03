@@ -86,15 +86,18 @@ def oauth_login():
 		if request_user_info.status_code == 200:
 			user_info = request_user_info.json()
 			user_email = user_info['email']
-			user = User(user_email)
-
-			try:
-				db.session.add(user)
-				db.session.commit()
-			except Exception as e:
-				print(e)
-				db.session.rollback()
-				return redirect(url_for("auth.login"))
+			user = User.query.filter_by(username=user_email).first()
+			if not user:
+				user = User(user_email)
+				try:
+					db.session.add(user)
+					db.session.commit()
+				except Exception as e:
+					print(e)
+					db.session.rollback()
+					return redirect(url_for("auth.login"))
+				else:
+					login_user(user)
 			else:
 				login_user(user)
 				return redirect(url_for("blog.posts"))
