@@ -1,5 +1,6 @@
 import os
-
+import yaml
+import logging.config
 from flask import Flask, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,6 +17,13 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 # логин менеджер для, используем для работы с пользователями
 login_manager = LoginManager()
+
+
+def get_logger(name=None):
+	with open("log_config.yml") as f:
+		logging.config.dictConfig(yaml.safe_load(f.read()))
+	name = name or "root"
+	return logging.getLogger(name)
 
 
 def error_404(error):
@@ -89,5 +97,3 @@ def create_app(config=None):
 		return redirect('/blog')
 
 	return app
-
-

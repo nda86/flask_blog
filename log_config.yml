@@ -1,0 +1,40 @@
+version: 1
+
+log_dir: logs
+
+formatters:
+  std_format:
+    style: "{"
+    format: "{asctime} - {module}.{funcName} - {levelname} - {message}"
+
+handlers:
+  root_file_handler:
+    filename: logs/root.log
+    class: logging.FileHandler
+    formatter: std_format
+    level: DEBUG
+
+  blog_file_handler:
+    filename: logs/blog.log
+    class: logging.FileHandler
+    formatter: std_format
+    level: DEBUG
+
+  auth_file_handler:
+    filename: logs/auth.log
+    class: logging.FileHandler
+    formatter: std_format
+    level: DEBUG
+
+loggers:
+  root:
+    handlers: [root_file_handler]
+    level: DEBUG
+
+  auth:
+    handlers: [root_file_handler, auth_file_handler]
+    level: DEBUG
+
+  blog:
+    handlers: [root_file_handler, blog_file_handler]
+    level: DEBUG

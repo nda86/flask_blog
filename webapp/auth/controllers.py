@@ -4,12 +4,15 @@ from requests import HTTPError
 from requests_oauthlib import OAuth2Session
 
 from webapp.strings import Title
-from webapp import login_manager, db
+from webapp import login_manager, db, get_logger
 from .forms import RegistrationForm, LoginForm
 from .models import User
 from app_config import OAuthConfig
 
 auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth', template_folder="../templates/auth")
+
+# получаем инстанс логгера
+logger = get_logger("auth")
 
 # устанавливаем имя вьюхи, куда будет редиректить незареганных юхзеров при доступе к контенту только для зареганых)
 login_manager.login_view = "auth.login"
@@ -43,7 +46,9 @@ def login():
 	# выполняется если на данный урл пришел post запрос и форма прошла валидацию
 	if form.validate_on_submit():
 		# валидация прошла, логи и пароль верны, следовательно проводим login_user
-		login_user(User.query.filter_by(username=form.username.data).first())
+		user =User.query.filter_by(username=form.username.data).first()
+		login_user(user)
+		logger.debug(f"user {user.username} loggin")
 		return redirect(url_for('blog.posts'))
 
 	# создаем объект для работы с OAuth
@@ -98,8 +103,10 @@ def oauth_login():
 					return redirect(url_for("auth.login"))
 				else:
 					login_user(user)
+					logger.debug(f"User {user.username} have been logged with google. His a new user")
 			else:
 				login_user(user)
+				logger.debug(f"User {user.username} have been logged with google. His alrerady have ben register")
 				return redirect(url_for("blog.posts"))
 		else:
 			print('server error')
@@ -125,9 +132,11 @@ def registration():
 			db.session.add(user)
 			db.session.commit()
 			login_user(user)
+			logger.debug(f"User {user} success register!")
+
 			return redirect(url_for('blog.posts'))
 		except Exception as e:
-			print(e)
+			logger.error(e)
 			db.session.rollback()
 
 	# выполняется если на данный урл пришел get запрос
@@ -136,5 +145,6 @@ def registration():
 
 @auth_blueprint.route('/logout')
 def logout():
+	logger.debug(f"User {current_user.username} has been loguot")
 	logout_user()
 	return redirect(url_for('blog.home'))
