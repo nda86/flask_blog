@@ -48,7 +48,7 @@ def login():
 		# валидация прошла, логи и пароль верны, следовательно проводим login_user
 		user =User.query.filter_by(username=form.username.data).first()
 		login_user(user)
-		logger.debug(f"user {user.username} loggin")
+		# logger.debug(f"user {user.username} loggin")
 		return redirect(url_for('blog.posts'))
 
 	# создаем объект для работы с OAuth
@@ -72,7 +72,7 @@ def oauth_login():
 	# если от провайдера пришли ошибки то пишем их и редиректим на страницу логина
 	if 'error' in request.args:
 		error = request.args.get('error')
-		print(error)
+		logger.error(error)
 		return redirect(url_for("auth.login"))
 
 	# если в ответе нет ни state ни code значит регистраци не прошла, перенаправляем на стр логина
@@ -85,7 +85,7 @@ def oauth_login():
 		try:
 			request_user_info = get_oauth(token=token).get(OAuthConfig.USER_INFO)
 		except HTTPError as e:
-			print('server error')
+			logger.error('server error')
 			return redirect(url_for("auth.login"))
 
 		if request_user_info.status_code == 200:

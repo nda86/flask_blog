@@ -1,5 +1,4 @@
 import pytest
-from flask import render_template
 from webapp import create_app, db
 from webapp.auth.models import User, Role
 

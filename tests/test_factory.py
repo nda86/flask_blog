@@ -1,5 +1,6 @@
 from webapp import create_app
 import warnings
+import pytest
 
 
 def test_create_app():
@@ -11,4 +12,5 @@ def test_create_app():
 	# отключаем варнинги, чтоб не было сообщений о незаполнености параметров в конфигурации,
 	# так как в этом тесте это не важно
 	warnings.filterwarnings('ignore')
-	assert create_app('webapp.tests.config.TestConfig').testing
+	assert create_app('tests.config.TestConfig').testing
+
