@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from flask_jwt_extended import JWTManager
 
 from .strings import Title
 
@@ -17,6 +18,8 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 # логин менеджер для, используем для работы с пользователями
 login_manager = LoginManager()
+# создаем менеджер для интеграции приложения с расширением flask_jwt_extended
+jwt = JWTManager()
 
 
 def get_logger(name=None):
@@ -77,14 +80,19 @@ def create_app(config=None):
 	# для выполнения входа пользователя в систему, выхода и определения текущего пользователя
 	login_manager.init_app(app)
 
+	# инициализируем jwt manager
+	jwt.init_app(app)
+
 	# импотируем функцию регистрации блюпринта и передаем в ней app, таким образом добавляем модуль(блюпринт) к серверу
 	from .blog import create_module as create_blog
 	from .auth import create_module as create_auth
 	from .admin import create_module as create_admin
+	from .api import create_module as create_api
 
 	create_blog(app)
 	create_auth(app)
 	create_admin(app)
+	create_api(app)
 
 	# регистрируем обработчики ошибок
 	app.register_error_handler(404, error_404)

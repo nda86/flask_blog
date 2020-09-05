@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request
+from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
 from flask_login import login_user, logout_user, current_user
+from flask_jwt_extended import create_access_token
 from requests import HTTPError
 from requests_oauthlib import OAuth2Session
 
@@ -148,3 +149,32 @@ def logout():
 	logger.debug(f"User {current_user.username} has been loguot")
 	logout_user()
 	return redirect(url_for('blog.home'))
+
+
+def authenticate(username, password):
+	user = User.query.filter_by(username=username).first()
+	if not user:
+		return None
+	check_password = user.check_password(password)
+	if not check_password:
+		return None
+	return user
+
+
+# генерация jwt тщкена для доступа к данным по api
+@auth_blueprint.route('/api', methods=["POST"])
+def api():
+	args = request.json
+	if not args:
+		return jsonify(message="JSON is missing")
+	username = args.get("username", None)
+	password = args.get("password", None)
+
+	if not username or not password:
+		return jsonify(message="Both username and password required")
+
+	user = authenticate(username, password)
+	if not user:
+		return jsonify(message="Wrong username or password")
+	jwt_token = create_access_token(user.id)
+	return jsonify(jwt_token=jwt_token)
