@@ -7,9 +7,12 @@ from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
-
+from flask_debugtoolbar import DebugToolbarExtension
 from .strings import Title
 
+
+# объект дебаггер
+debuger = DebugToolbarExtension()
 # объект класса flask-sqlalchemy - ORM
 db = SQLAlchemy()
 # объект для вывполнения миграций бд
@@ -82,6 +85,9 @@ def create_app(config=None):
 
 	# инициализируем jwt manager
 	jwt.init_app(app)
+
+	# инициализируем фласк дебаггер
+	debuger.init_app(app)
 
 	# импотируем функцию регистрации блюпринта и передаем в ней app, таким образом добавляем модуль(блюпринт) к серверу
 	from .blog import create_module as create_blog

@@ -15,9 +15,12 @@ class DevConfig(BaseConfig):
 	SQLALCHEMY_ECHO = True
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+	DEBUG_TB_INTERCEPT_REDIRECTS = False
+	DEBUG_TB_PROFILER_ENABLED = True
+
 
 class ProdConfig(BaseConfig):
-	pass
+	DEBUG = False
 
 
 class TestConfig(BaseConfig):
