@@ -1,7 +1,12 @@
 {% extends "base.html" %}
+{% import "macros.html" as macro %}
 
 {% block content %}
-    {% for post in posts %}
+    <div>
+        {{ macro.paginate(posts, request.endpoint) }}
+    </div>
+
+    {% for post in posts.items %}
         <div>
             <h2>{{ post.title }}</h2>
             <span><b>{{ post.user.username }}</b></span>
