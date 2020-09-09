@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>BLOG POSTS</h1>
+    {% for post in posts %}
+        <div>
+            <h2>{{ post.title }}</h2>
+            <span><b>{{ post.user.username }}</b></span>
+            <span><u>{{ post.created_at | date_format }}</u></span>
+            <div>
+                {{ post.text }}
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+
 {% endblock %}

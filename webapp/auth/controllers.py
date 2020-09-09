@@ -50,7 +50,7 @@ def login():
 		user =User.query.filter_by(username=form.username.data).first()
 		login_user(user)
 		# logger.debug(f"user {user.username} loggin")
-		return redirect(url_for('blog.posts'))
+		return redirect(url_for('blog.list_posts'))
 
 	# создаем объект для работы с OAuth
 	oauth = get_oauth()
@@ -68,7 +68,7 @@ def oauth_login():
 
 	# если залогиненый юзер зашел на урл, то перенаправляем его
 	if current_user.is_authenticated:
-		return redirect(url_for("blog.posts"))
+		return redirect(url_for("blog.list_posts"))
 
 	# если от провайдера пришли ошибки то пишем их и редиректим на страницу логина
 	if 'error' in request.args:
@@ -108,7 +108,7 @@ def oauth_login():
 			else:
 				login_user(user)
 				logger.debug(f"User {user.username} have been logged with google. His alrerady have ben register")
-				return redirect(url_for("blog.posts"))
+				return redirect(url_for("blog.list_posts"))
 		else:
 			print('server error')
 			return redirect(url_for("auth.login"))
@@ -127,7 +127,7 @@ def registration():
 		# так как валидация прошла, можно создавать пользователя
 		user = User()
 		user.username = form.username.data
-		user.set_password(form.password.data)
+		user.password = form.password.data
 
 		try:
 			db.session.add(user)
@@ -135,7 +135,7 @@ def registration():
 			login_user(user)
 			logger.debug(f"User {user} success register!")
 
-			return redirect(url_for('blog.posts'))
+			return redirect(url_for('blog.list_posts'))
 		except Exception as e:
 			logger.error(e)
 			db.session.rollback()

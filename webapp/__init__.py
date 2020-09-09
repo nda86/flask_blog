@@ -94,11 +94,13 @@ def create_app(config=None):
 	from .auth import create_module as create_auth
 	from .admin import create_module as create_admin
 	from .api import create_module as create_api
+	from .filters import create_filters
 
 	create_blog(app)
 	create_auth(app)
 	create_admin(app)
 	create_api(app)
+	create_filters(app)
 
 	# регистрируем обработчики ошибок
 	app.register_error_handler(404, error_404)

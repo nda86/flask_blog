@@ -30,7 +30,7 @@ def create_test_user():
 		raise
 
 	test_user = User('test')
-	test_user.set_password('12345678')
+	test_user.password = '12345678'
 
 	try:
 		db.session.add(test_user)

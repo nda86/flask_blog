@@ -27,6 +27,8 @@ class TestConfig(BaseConfig):
 	DEBUG = True
 	TESTING = True
 
+	DEBUG_TB_ENABLED = False
+
 	WTF_CSRF_ENABLED = False
 
 	# SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"

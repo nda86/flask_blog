@@ -1,7 +1,7 @@
 {% import 'macros.html' as macros %}
 <nav class="nav nav-pills nav-stacked">
     {{ macros.render_link('blog.home', ['nav-link'], 'Home') }}
-    {{ macros.render_link('blog.posts', ['nav-link'], 'Posts') }}
+    {{ macros.render_link('blog.list_posts', ['nav-link'], 'Posts') }}
     {{ macros.render_link('auth.login', ['nav-link'], 'Sign In') }}
     {{ macros.render_link('auth.registration', ['nav-link'], 'Sign Up') }}
     {% if current_user.is_authenticated %}{{ macros.render_link('auth.logout', ['nav-link'], 'Log Out') }}{% endif %}

@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
 	"""
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(255), unique=True, nullable=False)
-	password = db.Column(db.String(255))
+	_password = db.Column(name="password", type_=db.String(255))
 	# имеет связь многие ко многим с таблицей Role.
 	roles = db.relationship('Role', secondary=roles, backref=db.backref('users', lazy='dynamic'))
 	# имеет связи один ко многим с таблицей Post.
@@ -21,13 +21,19 @@ class User(db.Model, UserMixin):
 
 	# 	Пароль - устанавливаем не напрямую, а через метод set_password, в этом случае вместо пароля в базу
 	# 	записывается его хеш.
-	def set_password(self, password):
-		self.password = bcrypt.generate_password_hash(password)
+	@property
+	def password(self):
+		return self._password
+
+	@password.setter
+	def password(self, password):
+		self._password = bcrypt.generate_password_hash(password)
+
 
 	# метод для проверки переданного пароля
 	# сравниваем с хешем пароля хранимым в бд
 	def check_password(self, password):
-		return bcrypt.check_password_hash(self.password, password)
+		return bcrypt.check_password_hash(self._password, password)
 
 	# переопределенный метод класса UserMixin, служит для получения идентификатора пользователя,
 	# при выполнении flask_login.login_user

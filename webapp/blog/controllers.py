@@ -16,6 +16,7 @@ def home():
 
 @blog_blueprint.route('/posts', methods=['GET', 'POST'])
 @login_required
-def posts():
+def list_posts():
 	logger.debug(f"User {current_user.username} has access to the blog page")
-	return render_template("blog_posts.html", title=Title.tBlogPosts)
+	posts = Post.query.order_by(Post.created_at.desc()).all()
+	return render_template("blog_posts.html", title=Title.tBlogPosts, posts=posts)
