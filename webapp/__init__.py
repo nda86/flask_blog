@@ -8,6 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_caching import Cache
 from .strings import Title
 
 
@@ -23,6 +24,8 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 # создаем менеджер для интеграции приложения с расширением flask_jwt_extended
 jwt = JWTManager()
+# создаем объект кэша
+cache = Cache()
 
 
 def get_logger(name=None):
@@ -88,6 +91,9 @@ def create_app(config=None):
 
 	# инициализируем фласк дебаггер
 	debuger.init_app(app)
+
+	# инизиализация кеша
+	cache.init_app(app)
 
 	# импотируем функцию регистрации блюпринта и передаем в ней app, таким образом добавляем модуль(блюпринт) к серверу
 	from .blog import create_module as create_blog

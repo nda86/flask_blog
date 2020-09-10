@@ -14,7 +14,9 @@
 5. Система логирования(logging)
 7. API(flask-resful)
 8. JWT(flask-jwt-extended)
-9. Расширенная debug система(flask-debugtoolbar) 
+9. Расширенная debug система(flask-debugtoolbar)
+10. Пагинация страниц(макрос для шаблонов) 
+11. Система кэширования страниц(flask-caching)
 
 
 ### Примечание

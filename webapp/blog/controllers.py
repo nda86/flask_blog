@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, current_app
+from flask import Blueprint, render_template, current_app, request
 from flask_login import login_required, current_user
-
+from webapp import cache
 from webapp.strings import Title
 from .models import Post, Tag
 from webapp import get_logger
@@ -18,6 +18,7 @@ def home():
 @blog_blueprint.route('/posts', methods=['GET', 'POST'])
 @blog_blueprint.route('/posts/<int:page>', methods=['GET', 'POST'])
 @login_required
+@cache.cached(key_prefix=lambda: f"_{request.path}")
 def list_posts(page=None):
 	logger.debug(f"User {current_user.username} has access to the blog page")
 	page = page or 1
